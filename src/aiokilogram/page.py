@@ -41,6 +41,8 @@ class PlainMessageButton(MessageButton):
 
 @attr.s
 class ActionMessageButton(MessageButton):
+    """Button with callback data generated via a ``CallbackAction``"""
+
     action: CallbackAction = attr.ib(kw_only=True)
 
     def get_callback_data(self) -> str:
