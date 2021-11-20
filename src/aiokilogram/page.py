@@ -53,8 +53,8 @@ class ActionMessageButton(MessageButton):
 class MessageKeyboard:
     """Keyboard to be added to the message"""
 
-    row_width: int = attr.ib(kw_only=True)
     buttons: list[MessageButton] = attr.ib(kw_only=True)
+    row_width: int = attr.ib(kw_only=True, default=1)
 
 
 @attr.s
