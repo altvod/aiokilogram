@@ -18,6 +18,8 @@ class KiloDispatcher(Dispatcher):
     ):  # type: ignore
 
         if action is not None:
+            if kwargs.get('regexp') is not None:
+                raise ValueError('Cannot combine parameters "regexp" and "action"')
             kwargs['regexp'] = re.compile(action.get_pattern())
 
         return super().register_callback_query_handler(
@@ -32,6 +34,8 @@ class KiloDispatcher(Dispatcher):
     ):  # type: ignore
 
         if action is not None:
+            if kwargs.get('regexp') is not None:
+                raise ValueError('Cannot combine parameters "regexp" and "action"')
             kwargs['regexp'] = re.compile(action.get_pattern())
 
         return super().register_callback_query_handler(

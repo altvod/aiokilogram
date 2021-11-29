@@ -63,3 +63,4 @@ class MessagePage:
 
     body: MessageBody = attr.ib(kw_only=True)
     keyboard: Optional[MessageKeyboard] = attr.ib(kw_only=True, default=None)
+    disable_preview: bool = attr.ib(kw_only=True)
