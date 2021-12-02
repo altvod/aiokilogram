@@ -5,6 +5,7 @@ from typing import Optional, TYPE_CHECKING
 
 import attr
 import aiogram.types
+import emoji
 
 if TYPE_CHECKING:
     from aiokilogram.action import CallbackAction
@@ -22,7 +23,23 @@ class MessageBody:
 class MessageButton(abc.ABC):
     """Base class for keyboard buttons"""
 
-    text: str = attr.ib(kw_only=True)
+    text: Optional[str] = attr.ib(kw_only=True, default=None)
+    emoji: Optional[str] = attr.ib(kw_only=True, default=None)
+
+    @property
+    def emoji_code(self) -> str:
+        assert self.emoji is not None
+        return emoji.emojize(f':{self.emoji}:')
+
+    @property
+    def full_text(self) -> str:
+        if self.text is not None and self.emoji is not None:
+            return f'{self.emoji_code} {self.text}'
+        if self.text is not None:
+            return self.text
+        if self.emoji is not None:
+            return self.emoji_code
+        return ''
 
     @abc.abstractmethod
     def get_callback_data(self) -> str:

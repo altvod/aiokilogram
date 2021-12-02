@@ -51,7 +51,7 @@ class CommandHandler(abc.ABC, Generic[_GSETTINGS_TV]):
             keyboard_markup = types.InlineKeyboardMarkup(row_width=page.keyboard.row_width)
             for button in page.keyboard.buttons:
                 button = types.InlineKeyboardButton(
-                    text=button.text,
+                    text=button.full_text,
                     callback_data=button.get_callback_data(),
                 )
                 keyboard_markup.add(button)
