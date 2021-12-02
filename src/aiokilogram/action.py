@@ -126,7 +126,8 @@ class CallbackAction(abc.ABC):
         for name, field in sorted(cls.get_action_props().items()):
             parts.append(field.get_pattern(value=values.get(name)))
 
-        return sep_pattern.join(parts)
+        main_pattern = sep_pattern.join(parts)
+        return f'^{main_pattern}&'
 
     def serialize(self) -> str:
         parts: list[str] = []

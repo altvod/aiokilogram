@@ -65,10 +65,3 @@ class CommandHandler(abc.ABC, Generic[_GSETTINGS_TV]):
             reply_markup=keyboard_markup,
             disable_web_page_preview=page.disable_preview,
         )
-
-    async def respond_with_command_list(self, event: types.Message, text: str, command_list: list[str]) -> None:
-        command_list = [cmd.replace('_', '\\_') for cmd in command_list]
-        commands_str = '\n'.join(command_list)
-        await self.respond_with_text(
-            event, f'{text}\n\n{commands_str}',
-        )
