@@ -127,7 +127,7 @@ class CallbackAction(abc.ABC):
             parts.append(field.get_pattern(value=values.get(name)))
 
         main_pattern = sep_pattern.join(parts)
-        return f'^{main_pattern}&'
+        return f'^{main_pattern}$'
 
     def serialize(self) -> str:
         parts: list[str] = []
