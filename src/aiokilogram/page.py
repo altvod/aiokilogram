@@ -29,7 +29,7 @@ class MessageButton(abc.ABC):
     @property
     def emoji_code(self) -> str:
         assert self.emoji is not None
-        return emoji.emojize(f':{self.emoji}:')
+        return emoji.emojize(f':{self.emoji.strip(":")}:')
 
     @property
     def full_text(self) -> str:
