@@ -5,7 +5,7 @@ from typing import Optional, TYPE_CHECKING
 
 import attr
 import aiogram.types
-import emoji
+from emoji.core import emojize
 
 if TYPE_CHECKING:
     from aiokilogram.action import CallbackAction
@@ -29,7 +29,7 @@ class MessageButton(abc.ABC):
     @property
     def emoji_code(self) -> str:
         assert self.emoji is not None
-        return emoji.emojize(f':{self.emoji.strip(":")}:')
+        return emojize(f':{self.emoji.strip(":")}:')
 
     @property
     def full_text(self) -> str:
