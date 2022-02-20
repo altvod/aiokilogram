@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import abc
-from typing import Optional, TYPE_CHECKING
+from typing import Iterable, Optional, TYPE_CHECKING, Union
 
 import attr
 import aiogram.types
@@ -81,3 +81,20 @@ class MessagePage:
     body: MessageBody = attr.ib(kw_only=True)
     keyboard: Optional[MessageKeyboard] = attr.ib(kw_only=True, default=None)
     disable_preview: bool = attr.ib(kw_only=True, default=False)
+
+
+def simple_page(
+        text: str, buttons: Iterable[Union[tuple[str, CallbackAction], tuple[str, CallbackAction, str]]] = (),
+) -> MessagePage:
+    button_objs: list[ActionMessageButton] = []
+    for button_text, button_action, *extra in buttons:
+        emoji: Optional[str] = None
+        if extra:
+            emoji = extra[0]
+        button = ActionMessageButton(action=button_action, text=button_text, emoji=emoji)
+        button_objs.append(button)
+    page = MessagePage(
+        body=MessageBody(text=text),
+        keyboard=MessageKeyboard(buttons=button_objs),
+    )
+    return page
