@@ -86,7 +86,7 @@ class MessagePage:
 def simple_page(
         text: str, buttons: Iterable[Union[tuple[str, CallbackAction], tuple[str, CallbackAction, str]]] = (),
 ) -> MessagePage:
-    button_objs: list[ActionMessageButton] = []
+    button_objs: list[MessageButton] = []
     for button_text, button_action, *extra in buttons:
         emoji: Optional[str] = None
         if extra:
