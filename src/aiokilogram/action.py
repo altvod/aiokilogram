@@ -62,6 +62,24 @@ class StringActionField(ActionField):
         return str_value
 
 
+@attr.s(slots=True)
+class IntegerActionField(ActionField):
+    pattern: str = attr.ib(default=r'\d*')
+
+    def get_pattern(self, value: Optional[Any] = None) -> str:
+        if value is not None:
+            assert isinstance(value, int)
+            return re.escape(str(value))
+        return self.pattern
+
+    def serialize(self, value: Any) -> str:
+        assert isinstance(value, int)
+        return str(value)
+
+    def deserialize(self, str_value: str) -> Any:
+        return int(str_value)
+
+
 _ENUM_ACTION_FIELD_TV = TypeVar('_ENUM_ACTION_FIELD_TV', bound=Enum)
 
 
