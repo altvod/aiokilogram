@@ -173,6 +173,9 @@ class CallbackAction(abc.ABC):
     def when(cls, **values) -> ActionParameterization:
         return ActionParameterization(action_cls=cls, values=values)
 
+    def clone(self: _ACTION_TV, **kwargs: Any) -> _ACTION_TV:
+        return type(self)(**dict(self.data, **kwargs))
+
 
 @attr.s
 class ActionParameterization:
