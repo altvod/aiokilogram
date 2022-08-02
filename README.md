@@ -122,7 +122,7 @@ of the action's fields:
 ```python
     dispatcher.register_callback_query_handler(
         self.action_handler_method,
-        action=ListRecipesAction.when(action_type=ActionType.like_recipe),
+        action=SingleRecipeAction.when(action_type=ActionType.like_recipe),
     )
 ```
 
