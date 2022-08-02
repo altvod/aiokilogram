@@ -21,10 +21,10 @@ def test_action():
     assert my_action.some_str == 'qwerty'
     assert my_action.enum_value == MyEnum.second
 
-    assert MyAction.get_pattern() == r'(first|second)/.*'
-    assert MyAction.get_pattern(some_str='thing') == r'(first|second)/thing'
-    assert MyAction.get_pattern(enum_value=MyEnum.first) == r'first/.*'
-    assert MyAction.get_pattern(some_str='thing', enum_value=MyEnum.first) == r'first/thing'
+    assert MyAction.get_pattern() == r'^(first|second)/.*$'
+    assert MyAction.get_pattern(some_str='thing') == r'^(first|second)/thing$'
+    assert MyAction.get_pattern(enum_value=MyEnum.first) == r'^first/.*$'
+    assert MyAction.get_pattern(some_str='thing', enum_value=MyEnum.first) == r'^first/thing$'
 
     assert my_action.serialize() == 'second/qwerty'
 
