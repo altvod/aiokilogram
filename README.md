@@ -20,47 +20,36 @@ command handlers. Basically this means that you can group several commands
 as methods in a class and assign them to message and callback patterns
 at class level.
 
-Handler classes look something like this:
+A simplistic bit will look something like this:
 
-```python
-from aiokilogram.handler import CommandHandler
-
-class TestCommandHandler(CommandHandler):
-    async def test_handler(self, event) -> None:
-        await self.send_text(user_id=event.from_user.id, text=f'This is a test reply')
-        
-    # other related commands go here
-
-    def register(self, dispatcher) -> None:
-        dispatcher.register_message_handler(self.test_handler, commands={'hello'})
-        # register other commands here
-```
-
-The whole bot application will then be run like this:
 ```python
 import asyncio
 import os
 from aiokilogram.bot import KiloBot
 from aiokilogram.settings import BaseGlobalSettings
+from aiokilogram.handler import CommandHandler
+from aiokilogram.registration import register_message_handler
 
-class TestBot(KiloBot):
-    def register(self, bot, dispatcher) -> None:
-        TestCommandHandler(global_settings=self._global_settings, bot=bot).register(dispatcher)
-        # other command handlers can be added here
+class TestCommandHandler(CommandHandler):
+    @register_message_handler(commands={'hello'})
+    async def test_handler(self, event) -> None:
+        await self.send_text(user_id=event.from_user.id, text=f'This is a test reply')
 
 def run_bot():
-    bot = TestBot(global_settings=BaseGlobalSettings(
-        tg_bot_token=os.environ['TG_BOT_TOKEN']
-    ))
+    bot = KiloBot(
+        global_settings=BaseGlobalSettings(tg_bot_token=os.environ['TG_BOT_TOKEN']),
+        handler_classes=[TestCommandHandler],
+    )
     asyncio.run(bot.run())
 
 if __name__ == '__main__':
     run_bot()
 ```
 
-For more info you can take a look at a [simple boilerplate bot](boilerplate/simple.py)
+For more info you can take a look at a [boilerplate bot with buttons](boilerplate/button.py)
+and [simple boilerplate bot](boilerplate/simple.py)
 
-Set the `TG_BOT_TOKEN` env variable to run it.
+Set the `TG_BOT_TOKEN` env variable to run them.
 
 
 ### Action Buttons
@@ -111,27 +100,21 @@ page = MessagePage(
     await self.send_message_page(user_id=event.from_user.id, page=page)
 ```
 
-4. Define a handler method for this action where you deserialize the action parameters
-   and somehow use them in your logic:
+4. Define and register a handler method for this action where you deserialize the 
+   action parameters and somehow use them in your logic:
 ```python
-async def do_single_recipe_action(self, query: types.CallbackQuery) -> None:
-    action = SingleRecipeAction.deserialize(query.data)
-    if 'soup' in action.recipe_title.lower():
-        do_soup_stuff()  # whatever
-    # ...
-```
-
-5. Bind this method to the action class in the `register` method of the handler class:
-```python
-    dispatcher.register_callback_query_handler(
-        self.do_single_recipe_action, action=SingleRecipeAction,
-    )
+class MyHandler(CommandHandler):
+    @register_callback_query_handler(action=SingleRecipeAction)
+    async def do_single_recipe_action(self, query: types.CallbackQuery) -> None:
+        action = SingleRecipeAction.deserialize(query.data)
+        if 'soup' in action.recipe_title.lower():
+            do_soup_stuff()  # whatever
+        # ...
 ```
 or you can be more precise and limit the binding to specific values
 of the action's fields:
 ```python
-    dispatcher.register_callback_query_handler(
-        self.do_single_recipe_action,
+    @register_callback_query_handler(
         action=SingleRecipeAction.when(action_type=ActionType.like_recipe),
     )
 ```
