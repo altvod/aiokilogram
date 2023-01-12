@@ -2,11 +2,10 @@ import asyncio
 import os
 from enum import Enum
 
-from aiogram import Bot, types
+from aiogram import types
 
 from aiokilogram.bot import KiloBot
 from aiokilogram.settings import BaseGlobalSettings
-from aiokilogram.dispatcher import KiloDispatcher
 from aiokilogram.handler import CommandHandler
 from aiokilogram.action import (
     CallbackAction, StringActionField, EnumActionField,
@@ -14,6 +13,7 @@ from aiokilogram.action import (
 from aiokilogram.page import (
     simple_page, ActionMessageButton, MessagePage, MessageBody, MessageKeyboard,
 )
+from aiokilogram.registration import register_message_handler, register_callback_query_handler
 
 
 class ActionType(Enum):
@@ -38,6 +38,7 @@ class ListRecipesAction(CallbackAction):
 class RecipeCommandHandler(CommandHandler):
     """Handles recipe commands"""
 
+    @register_callback_query_handler(action=SingleRecipeAction)
     async def do_single_recipe_action(self, query: types.CallbackQuery) -> None:
         action = SingleRecipeAction.deserialize(query.data)
         if action.action_type == ActionType.show_recipe:
@@ -72,18 +73,21 @@ class RecipeCommandHandler(CommandHandler):
             ]
         )
 
+    @register_callback_query_handler(action=ListRecipesAction.when(owner=RecipeOwner.angela))
     async def list_recipes_of_angela(self, query: types.CallbackQuery) -> None:
         await self.send_message_page(
             user_id=query.from_user.id,
             page=self._make_recipe_list_page(owner=RecipeOwner.angela)
         )
 
+    @register_callback_query_handler(action=ListRecipesAction.when(owner=RecipeOwner.daniel))
     async def list_recipes_of_daniel(self, query: types.CallbackQuery) -> None:
         await self.send_message_page(
             user_id=query.from_user.id,
             page=self._make_recipe_list_page(owner=RecipeOwner.daniel)
         )
 
+    @register_message_handler(commands={'recipe_menu'})
     async def recipe_menu(self, event: types.Message) -> None:
         """Compiling a page manually"""
 
@@ -102,30 +106,12 @@ class RecipeCommandHandler(CommandHandler):
         )
         await self.send_message_page(user_id=event.from_user.id, page=page)
 
-    def register(self, dispatcher: KiloDispatcher) -> None:
-        dispatcher.register_callback_query_handler(
-            self.do_single_recipe_action, action=SingleRecipeAction,
-        )
-        dispatcher.register_callback_query_handler(
-            self.list_recipes_of_angela,
-            action=ListRecipesAction.when(owner=RecipeOwner.angela),
-        )
-        dispatcher.register_callback_query_handler(
-            self.list_recipes_of_daniel,
-            action=ListRecipesAction.when(owner=RecipeOwner.daniel),
-        )
-        dispatcher.register_message_handler(
-            self.recipe_menu, commands={'recipe_menu'},
-        )
-
-
-class ButtonBot(KiloBot):
-    def register(self, bot: Bot, dispatcher: KiloDispatcher) -> None:
-        RecipeCommandHandler(global_settings=self._global_settings, bot=bot).register(dispatcher)
-
 
 def run_bot():
-    bot = ButtonBot(global_settings=BaseGlobalSettings(tg_bot_token=os.environ['TG_BOT_TOKEN']))
+    bot = KiloBot(
+        global_settings=BaseGlobalSettings(tg_bot_token=os.environ['TG_BOT_TOKEN']),
+        handler_classes=[RecipeCommandHandler],
+    )
     asyncio.run(bot.run())
 
 

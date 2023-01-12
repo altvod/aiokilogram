@@ -38,6 +38,6 @@ class KiloDispatcher(Dispatcher):
                 raise ValueError('Cannot combine parameters "regexp" and "action"')
             kwargs['regexp'] = re.compile(action.get_pattern())
 
-        return super().register_callback_query_handler(
+        return super().callback_query_handler(
             *custom_filters, state=state, run_task=run_task, **kwargs,
         )

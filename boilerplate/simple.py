@@ -1,3 +1,7 @@
+"""
+This bot uses old, explicit class and method registration.
+"""
+
 import asyncio
 import os
 import re

@@ -111,26 +111,29 @@ page = MessagePage(
     await self.send_message_page(user_id=event.from_user.id, page=page)
 ```
 
-4. Bind a method to this action class in the `register` method of the handler class:
+4. Define a handler method for this action where you deserialize the action parameters
+   and somehow use them in your logic:
+```python
+async def do_single_recipe_action(self, query: types.CallbackQuery) -> None:
+    action = SingleRecipeAction.deserialize(query.data)
+    if 'soup' in action.recipe_title.lower():
+        do_soup_stuff()  # whatever
+    # ...
+```
+
+5. Bind this method to the action class in the `register` method of the handler class:
 ```python
     dispatcher.register_callback_query_handler(
-        self.action_handler_method, action=SingleRecipeAction,
+        self.do_single_recipe_action, action=SingleRecipeAction,
     )
 ```
 or you can be more precise and limit the binding to specific values
 of the action's fields:
 ```python
     dispatcher.register_callback_query_handler(
-        self.action_handler_method,
+        self.do_single_recipe_action,
         action=SingleRecipeAction.when(action_type=ActionType.like_recipe),
     )
-```
-
-5. Deserialize the action parameters in the handler method:
-```python
-action = SingleRecipeAction.deserialize(query.data)
-if 'soup' in action.recipe_title.lower():
-    do_soup_stuff()  # whatever
 ```
 
 
