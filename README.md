@@ -136,7 +136,7 @@ First, define an error handler:
 from aiokilogram.errors import DefaultErrorHandler
 
 class MyErrorHandler(DefaultErrorHandler):
-    def get_message(self, err: Exception):
+    def make_message(self, err: Exception):
         # Any custom logic can go here.
         # This method can return either a `str`, a `MessagePage` or `None`.
         # In case of `None` no message is sent and the exception is re-raised.

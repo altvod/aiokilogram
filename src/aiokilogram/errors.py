@@ -21,11 +21,11 @@ class ErrorHandler:
 
 
 class DefaultErrorHandler(ErrorHandler):
-    def get_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
+    def make_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
         return None
 
     async def handle(self, err: Exception, messenger: MessengerInterface, user_id: str) -> bool:
-        message = self.get_message(err=err)
+        message = self.make_message(err=err)
         if message is None:
             return True
 

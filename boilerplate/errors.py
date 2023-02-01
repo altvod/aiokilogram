@@ -13,12 +13,12 @@ from aiokilogram.registration import register_message_handler
 
 
 class MainErrorHandler(DefaultErrorHandler):
-    def get_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
+    def make_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
         return f'This is the main error message about {type(err).__name__}'
 
 
 class CustomErrorHandler(DefaultErrorHandler):
-    def get_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
+    def make_message(self, err: Exception) -> Optional[Union[MessagePage, str]]:
         return simple_page(text=f'This is the custom error message about {type(err).__name__}')
 
 
