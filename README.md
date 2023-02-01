@@ -125,6 +125,47 @@ See [boilerplate bot with buttons](boilerplate/button.py)
 Set the `TG_BOT_TOKEN` env variable to run it.
 
 
+### Error handling
+
+Generic error (exception) handling in bots can be implemented via `ErrorHandler`s
+at class or method level.
+
+First, define an error handler:
+
+```python
+from aiokilogram.errors import DefaultErrorHandler
+
+class MyErrorHandler(DefaultErrorHandler):
+    def get_message(self, err: Exception):
+        # Any custom logic can go here.
+        # This method can return either a `str`, a `MessagePage` or `None`.
+        # In case of `None` no message is sent and the exception is re-raised.
+        return 'This is my error message'
+```
+
+Then add it either to the message handler class:
+
+```python
+class MyCommandHandler(CommandHandler):
+    error_handler = MyErrorHandler()
+```
+
+to handle errors in all methods registered via the
+`register_message_handler` and `register_callback_query_handler` decorators.
+
+Or you can do it at method-level:
+
+```python
+    @register_message_handler(commands={'my_command'}, error_handler=MyErrorHandler())
+    async def my_command_handler(self, event: types.Message) -> None:
+        pass  # do whatever you do...
+```
+
+See [boilerplate bot with error handling](boilerplate/errors.py)
+
+Set the `TG_BOT_TOKEN` env variable to run it.
+
+
 ## Links
 
 Homepage on GitHub: https://github.com/altvod/aiokilogram
